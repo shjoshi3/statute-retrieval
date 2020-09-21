@@ -1,0 +1,75 @@
+#default controls for query expansion
+querying.postprocesses.order=QueryExpansion
+querying.postprocesses.controls=qe:QueryExpansion
+#default controls for the web-based interface. SimpleDecorate
+#is the simplest metadata decorator. For more control, see Decorate.
+querying.postfilters.order=SimpleDecorate,SiteFilter,Scope
+querying.postfilters.controls=decorate:SimpleDecorate,site:SiteFilter,scope:Scope
+
+#default and allowed controls
+querying.default.controls=
+querying.allowed.controls=scope,qe,qemodel,start,end,site,scope
+
+#document tags specification
+#for processing the contents of
+#the documents, ignoring DOCHDR
+#TrecDocTags.doctag=DOC
+#TrecDocTags.idtag=DOCNO
+#TrecDocTags.skip=DOCHDR
+#set to true if the tags can be of various case
+#TrecDocTags.casesensitive=false
+
+####################################################################
+#Web Interface and Query-biased summarisation
+###################################################################
+
+#TRECWebCollection extends the traditional TRECCollection by saving meta-data from the
+#document headers (url,crawldate,etc) as document properties.
+#trec.collection.class=TRECWebCollection
+
+#We want to save two additional tags as abstracts in the properties of each document, called title and body
+#TaggedDocument.abstracts=title,body
+
+#They come from the tags in the TRECCollection, in this case the WT2G collection. We will save the 
+#TITLE tags in the title abstract. ELSE is a special case that saves everything that is not added to 
+#an existing abstract (everything but the TITLE tag). In this case we are saving ELSE to the body abstract.
+#TaggedDocument.abstracts.tags=TITLE,ELSE
+TaggedDocument.abstracts.tags=DESC
+
+#We also need to specify how many characters we should save in each field
+#TaggedDocument.abstracts.lengths=120,500
+TaggedDocument.abstracts.lengths=500
+
+#Next we need to tell the meta index to save all of these extra document properties
+#so that they are not thrown away. In addition to the docno which is always available, 
+#and the title and url tasks saved by TaggedDocument, we will also save the url and 
+#crawldate which are added to each document by the TRECWebCollection class.
+#indexer.meta.forward.keys=docno,title,body,url,crawldate
+indexer.meta.forward.keys=docno,desc
+
+#Again, we need to specify how many characters long each meta index entry is. Note that the title and body
+#abstract lengths should be the same here as in TaggedDocument.abstracts.
+#indexer.meta.forward.keylens=32,120,500,140,35
+indexer.meta.forward.keylens=32,500
+
+##################################################################
+#SimpleFileCollection specific properties
+###################################################################
+trec.collection.class=SimpleFileCollection
+indexing.simplefilecollection.defaultparser=FileDocument
+
+#query tags specification
+TrecQueryTags.doctag=TOP
+TrecQueryTags.idtag=NUM
+TrecQueryTags.process=TOP,NUM,DESC
+#TrecQueryTags.skip=DESC,NARR
+
+#stop-words file
+stopwords.filename=stopword-list.txt
+
+#the processing stages a term goes through
+termpipelines=Stopwords,PorterStemmer
+
+trec.output.format.length=197
+matching.retrieved_set_size=197
+
