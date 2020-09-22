@@ -8,11 +8,11 @@ This repository containes python notebooks used in the thesis work 'Improving Le
 We have Indian law statute documents (197) and queries (50) taken from [AILA FIRE 2019](https://sites.google.com/view/fire-2019-aila/track-description). The objective is to improve retrieval accuracy (measured in _MAP_)
 
 ### Dataset
-It is available [here](https://drive.google.com)
+It is available under `dataset` directory. Run `./dataset_prepare.sh `
 
 ### Requirements
-**For Ubuntu**
-Download and extract [terrier3.5](http://terrier.org/download/agree.shtml?terrier-3.5.tar.gz) (versions >3.5 should be compatible!)
+**For Ubuntu**  
+Download and extract [terrier3.5](http://terrier.org/download/agree.shtml?terrier-3.5.tar.gz) (versions >3.5 should be compatible!).  
 Install python3 (3.6 or greater) and pip3.
 - Create a venv in this project directory (virtual environment is inbuilt with python3)
     + `python3.6 -m venv env    #python3.x as per your install`
@@ -35,13 +35,15 @@ We obtained the baseline codes from Y. Shao et al ([here](https://drive.google.c
 
 Although baselines 1 and 2 were able to match the results in the AILA Overview paper, our attempt for baseline 3 was significantly below the expected result. Their approach involved manual keyphrase selection which we didn't perform. We retain our best-attempt calling it as baseline 3.
 
-I've directly provided the score file (query-statue pair score in TREC-like format) under `baselines` directory. The format is 5 space-separated values. It goes like this -
-_Ex:_ q1 Q0 170 1 0.8837118244094455 run1(H*SH)
-which means the baseline method for AILA_Q1 assigned S170 a score of 0.8837118244094455. Q0 is a fixed string. run1(H*SH) is a title assigned by me to this scoring scheme. The 4th value (in this case "1") is denoting rank of S170 score for AILA_Q1. (*Note*: In some files, these ranks start with 0,1,2 and so on and in other files, the ranks start with 1,2,3 and so on.)
+I've directly provided the score file (query-statue pair score in TREC-like format) under `baselines` directory. The format is 5 space-separated values. It goes like this -  
+_Ex:_ q1 Q0 170 1 0.8837118244094455 run1(H\*SH)  
+which means the baseline method for AILA_Q1 assigned S170 a score of 0.8837118244094455.  
+Q0 is a fixed string. run1(H\*SH) is a title assigned by me to this scoring scheme.  
+The 4th value (in this case "1") is denoting rank of S170 score for AILA_Q1. (*Note*: In some files, these ranks start with 0,1,2 and so on and in other files, the ranks start with 1,2,3 and so on.)
 
 **IMPORTANT**:
 - The scores in these files are **relative**. The comparison of scores only makes sense for a single query. In other words, other than the rank (4th value in each line), there is not much to infer from these files.
-- In case of baselin2, there are some statue-query pair in the baseline file with no entries, it is because Terrier models omitted documents with score zero.
+- In case of baseline2, there are some statue-query pair in the baseline file with no entries, it is because Terrier models omitted documents with score zero.
 - I've followed the below prefixes for file names of baselines:
     + vsm2 : baseline1
     + IFB2 : baseline2
@@ -58,7 +60,8 @@ Summarising my steps of retrieval. More information is [here](http://terrier.org
 - Create a `<your-terrier-installation-path>/etc/collection.spec` file using the template of `base-scoring/terrier-files/collection_statute.spec`.
 - Create a `<your-terrier-installation-path>/etc/terrier.properties` file using the template of `base-scoring/terrier-files/terrier.properties.statute`.
 
-The collection.spec tells Terrier installation the location of documents to index. The **order** in collection.spec is important. The first file becomes terrier document 1, second file becomes terrier document 2, and so on. These document numbers are returned by Terrier while retrieving.
+The collection.spec tells Terrier installation the location of documents to index. The **order** in collection.spec is important. The first file becomes terrier document 1, second file becomes terrier document 2, and so on. These document numbers are returned by Terrier while retrieving.  
+Also, remember to include the paths of empty statutes S32.txt, S58.txt, S162.txt as the 32nd document, 58th document and 162nd document in collection.spec order respectively. Else, the document id in Terrier retrieval output will not match the actual documents in dataset. 
 
 - Now, go to terrier installation folder and run
     + `bin/trec_terrier.sh -i  #for indexing of statute docs`
@@ -69,7 +72,11 @@ where, `-Dtrec.tropics` gives path of topics file and `-Dtrec.model` can be used
 The score file with a `.res` extension should now have been created. The score file I've used for experiments is available at `base-scoring/terrier-files/BM25b0.75.res`.
 
 #### LDA topic similarity score
-This was implemented in python using _gensim_ topic modeling library. Run the notebooks to get details.
+This was implemented in python using _gensim_ topic modeling library. Activate the virtual environment and then run `lda-scoring.py`-
+    + `source env/bin/activate`
+    + `cd base-scoring; python lda-scoring.py`
+This will create a new directory (based on timestamp) with output score file `lda_base_score.res` and other extra files such as lda model files, dictionary of tokens in statute corpus, etc. 
 
-TODO: Explain the notebook run procedure
-
+#### Evaluation plan
+Run `evaluate.sh` with a single arg that tells location of output score file.  
+_Ex:_`./evaluate.sh base-scoring/2020-09-23_01-20-20/lda_base_score.res`

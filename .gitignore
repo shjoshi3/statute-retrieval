@@ -1,0 +1,8 @@
+# Ignore extracted dataset
+dataset/
+
+# Ignore virtual environment setup
+env/
+
+# Ignore lda run files
+base-scoring/20*
