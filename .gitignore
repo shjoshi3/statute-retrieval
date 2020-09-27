@@ -4,5 +4,8 @@ dataset/
 # Ignore virtual environment setup
 env/
 
-# Ignore lda run files
+# Ignore lda run folders
 base-scoring/20*
+
+# Ignore base-scoring run files
+base-scoring/*.res

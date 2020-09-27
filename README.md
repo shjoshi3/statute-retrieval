@@ -12,7 +12,7 @@ It is available under `dataset` directory. Run `./dataset_prepare.sh `
 
 ### Requirements
 **For Ubuntu**  
-Download and extract [terrier3.5](http://terrier.org/download/agree.shtml?terrier-3.5.tar.gz) (versions >3.5 should be compatible!).  
+Download and extract terrier 4.x preferably, [terrier4.2](http://terrier.org/download/agree.shtml?terrier-core-4.2-bin.tar.gz).  
 Install python3 (3.6 or greater) and pip3.
 - Create a venv in this project directory (virtual environment is inbuilt with python3)
     + `python3.6 -m venv env    #python3.x as per your install`
@@ -56,25 +56,16 @@ TODO: Explain how I generated these baseline files!
 
 #### BM25 scoring (_using Terrier_)
 
-Summarising my steps of retrieval. More information is [here](http://terrier.org/docs/v3.5/quickstart.html)
-- Create a `<your-terrier-installation-path>/etc/collection.spec` file using the template of `base-scoring/terrier-files/collection_statute.spec`.
-- Create a `<your-terrier-installation-path>/etc/terrier.properties` file using the template of `base-scoring/terrier-files/terrier.properties.statute`.
-
-The collection.spec tells Terrier installation the location of documents to index. The **order** in collection.spec is important. The first file becomes terrier document 1, second file becomes terrier document 2, and so on. These document numbers are returned by Terrier while retrieving.  
-Also, remember to include the paths of empty statutes S32.txt, S58.txt, S162.txt as the 32nd document, 58th document and 162nd document in collection.spec order respectively. Else, the document id in Terrier retrieval output will not match the actual documents in dataset. 
-
-- Now, go to terrier installation folder and run
-    + `bin/trec_terrier.sh -i  #for indexing of statute docs`
-    + `bin/trec_terrier.sh --printstats #for stats of the built index, no of docs, etc.`
-- The AILA queries have been formatted in TREC topic format by me. Copy `base-scoring/terrier-files/topics.txt` to `<your-terrier-installation-path>/var/topics.txt` To retrieve using BM25 model, run
-    + `bin/trec_terrier.sh -r -Dtrec.topics=var/topics.txt -Dtrec.model=BM25  > var/BM25b0.75.info 2>&1  #redirect to info file is optional`
-where, `-Dtrec.tropics` gives path of topics file and `-Dtrec.model` can be used to apply any other model as well (see [here](http://terrier.org/docs/v3.5/configure_retrieval.html))
-The score file with a `.res` extension should now have been created. The score file I've used for experiments is available at `base-scoring/terrier-files/BM25b0.75.res`.
+Ensure Terrier is installed.  
+- `export TERRIER_HOME=<your-terrier-installation-path>`.
+-  Then, run `./base-scoring/bm25-scoring.sh`.  
+Result file will be generated at `base-scoring` directory. 
 
 #### LDA topic similarity score
-This was implemented in python using _gensim_ topic modeling library. Activate the virtual environment and then run `lda-scoring.py`-
-    + `source env/bin/activate`
-    + `cd base-scoring; python lda-scoring.py`
+This was implemented in python using _gensim_ topic modeling library. Activate the virtual environment and then run `lda-scoring.py`.
+- `source env/bin/activate`
+- `cd base-scoring; python lda-scoring.py`
+
 This will create a new directory (based on timestamp) with output score file `lda_base_score.res` and other extra files such as lda model files, dictionary of tokens in statute corpus, etc. 
 
 #### Evaluation plan
