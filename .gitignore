@@ -9,3 +9,6 @@ base-scoring/20*
 
 # Ignore base-scoring run files
 base-scoring/*.res
+
+# Ignore rf folders
+rf/rf-files-20*

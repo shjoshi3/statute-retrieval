@@ -68,6 +68,13 @@ This was implemented in python using _gensim_ topic modeling library. Activate t
 
 This will create a new directory (based on timestamp) with output score file `lda_base_score.res` and other extra files such as lda model files, dictionary of tokens in statute corpus, etc. 
 
+### Scoring with rf
+First, we divide the 50 queries into 5 "folds" or sets. For each fold, we calculate rf of every statute, from the gold standard of queries of remaining 4 folds. Activate the virtual environment. 
+- Create a `rf/queryFold` file using the template of `rf/sample/queryFold`.  
+- Then, run `./rf/applyRF.sh ` with a single arg that tells location of output score file.  
+_Ex:_ `./rf/applyRF.sh base-scoring/terrier-files/BM25b0.75.res`  
+This will create a new directory `rf-files-..` (based on timestamp) with 5 output score files `.rf.res` corresponding to each fold (and other extra files). You may then evaluate and take average of results over 5 folds.  
+
 #### Evaluation plan
 Run `evaluate.sh` with a single arg that tells location of output score file.  
 _Ex:_`./evaluate.sh base-scoring/2020-09-23_01-20-20/lda_base_score.res`
